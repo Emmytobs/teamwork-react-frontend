@@ -1,0 +1,14 @@
+.menu-bar {
+    flex: 1.2;
+    max-height: 92vh;
+    margin-top: 6px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: fixed;
+    left: 0%;
+    top: 7.2%;
+    width: 300px;
+    background-color: var(--main-bg-color);
+    /* background-color: black; */
+    color: #c9c3c371;
+}

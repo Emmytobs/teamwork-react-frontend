@@ -1,0 +1,7 @@
+.comment-box {
+    flex: 1.5;
+    height: 100vh;
+    overflow: auto;
+    background-color: tomato;
+    display: none;
+}

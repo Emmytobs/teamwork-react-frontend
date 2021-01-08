@@ -1,6 +1,6 @@
 .menu-bar {
     flex: 1.2;
-    max-height: 92vh;
+    min-height: 92vh;
     margin-top: 6px;
     overflow-y: auto;
     overflow-x: hidden;

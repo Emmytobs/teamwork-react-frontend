@@ -27,7 +27,7 @@ function SignUp(props) {
         // Fatch departments' ids and names here
         if(!departments.length) {
             try {
-                const response = await axios.get('http://localhost:5000/departments');
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/departments`);
                 const { departments } = response.data.data;
                 setDepartments(departments);
             } catch (error) {
@@ -38,7 +38,7 @@ function SignUp(props) {
     const submitForm = async (e) => {
         // Send POST request with form data
         try {
-            const response = await axios.post('http://localhost:5000/create-employee-user', { ...form });
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/create-employee-user`, { ...form });
             if(!response) {
                 return setError('Couldn\'t make request. Please check your internet connection')
             }
@@ -51,7 +51,7 @@ function SignUp(props) {
     }
 
     return (
-        <VStack as = "form" spacing="20px" color="#000">
+        <VStack as = "form" spacing="20px" color="gray.300">
             <Input name="firstname" size="md" type="text" value={form.firstname} placeholder="Firstname" onChange={updateForm}  />
             <Input name="lastname" size="md" type="text" value={form.lastname} placeholder="Lastname" onChange={updateForm}  />
             <Input name="email" size="md" type="email" value={form.email} placeholder="Enter your email address" onChange={updateForm}  />
@@ -70,7 +70,7 @@ function SignUp(props) {
             
             <Input name="address" size="md" type="text" value={form.address} placeholder="Address" onChange={updateForm}  />
             {error && <FormError message={error} />}
-            <Button onClick={submitForm}>Create employee user</Button>
+            <Button onClick={submitForm} color="#000">Create employee user</Button>
         </VStack>
     )
 }

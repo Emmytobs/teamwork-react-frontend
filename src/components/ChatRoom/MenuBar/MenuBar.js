@@ -4,14 +4,10 @@ import {
     Box, 
     Text, 
     List,
-    ListItem, 
-    ListIcon,
-    Accordion,
-    AccordionButton,
-    AccordionItem,
-    AccordionIcon,
-    AccordionPanel
+    ListItem,
 } from '@chakra-ui/react';
+
+import { storeDepartmentMembers } from '../../../context/dispatchers';
 
 import axios from 'axios'
 
@@ -20,17 +16,29 @@ import './MenuBar.css';
 function MenuBar(props) {
     useEffect(() => {
         fetchDepartmentMembers()
-    })
+    }, []);
 
-    const [members, setMembers] = useState([])
-
-    async function fetchDepartmentMembers () {
-        // Fetch department memeber and store in state
+    async function fetchDepartmentMembers() {
         try {
-            const response = await axios.get('http://localhost:5000/departments.members');
-            console.log(response);
+            const response = await axios.get(
+                `${process.env.REACT_APP_API_URL}/departments/members`,
+                {
+                    headers: {
+                        'Authorization': 'Bearer ' + props.token,
+                    },
+                }
+            );
+            if (!response) {
+                // set global error state indicating no internet
+            }
+        
+            if (!response.data.data) {
+                // Set notification state that tells the user there are no members
+            }
+            storeDepartmentMembers(response.data.data.members, props.dispatch);
         } catch (error) {
-            console.log(error.response);
+            // set error state
+            console.log(error.response)
         }
     }
 
@@ -55,14 +63,14 @@ function MenuBar(props) {
                 <Text as="h1" fontSize="2rem" px="12px">Members</Text>
                
                 <List>
-                    {props.members.map((member, index) => 
+                    {props.departmentMembers.map((member, index) => 
                         <ListItem 
                             key={index}
                             cursor="pointer" 
                             py="0"
                             px="0"
                             _hover={{ background: "rgba(255, 255, 255, 0.3)", fontWeight: "500" }} >
-                            <Text py="10px" px="12px" >{member.name}</Text>
+                            <Text py="10px" px="12px" >{member.firstname} {member.lastname}</Text>
                         </ListItem>)
                     }
                 </List>
@@ -74,31 +82,8 @@ function MenuBar(props) {
 const mapStateToProps = (state) => {
     return {
         user: state.user,
-        members: [
-            { name: "Emmanuel" }, 
-            { name: "Tobi" }, 
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-            { name: "Jonathan" },
-        ]
+        departmentMembers: state.departmentMembers,
+        token: state.token,
     }
 }
 

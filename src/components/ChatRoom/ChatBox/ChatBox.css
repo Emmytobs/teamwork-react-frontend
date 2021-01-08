@@ -3,6 +3,36 @@
     min-height: 92vh;
     margin-top: 6px;
     margin-left: 300px;
+    margin-bottom: 200px;
     overflow: auto;
     width: fit-content
+}
+
+.modify-post-container {
+    display: none;
+    margin-left: 15px;
+    color: #fff;
+}
+
+
+.post-container:hover {
+    background: #fff;
+    cursor: pointer;
+}
+
+.post-container:hover .modify-post-container {
+    display: inline-block;
+}
+
+.edit-btn:hover,
+.delete-btn:hover {
+    border: 2px solid var(--main-bg-color);
+    background: #fff;
+    color: #000;
+}
+
+.edit-btn,
+.delete-btn {
+    background: var(--main-bg-color);
+    padding: 5px 5px;
 }

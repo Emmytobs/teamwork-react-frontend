@@ -19,7 +19,7 @@ function LogIn(props) {
     const submitForm = async (e) => {
         // Send API post request to log user in
         try {
-            const response = await axios.post('http://localhost:5000/login', { ...form });
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, { ...form });
             const { token, user: { firstname, lastname, email, department, isadmin, profilePic } } = response.data.data;
         
             if(!response) {
@@ -31,16 +31,20 @@ function LogIn(props) {
             setError('');
             props.history.push('/app');
         } catch (error) {
+            if (error.message === 'Network Error') {
+                return setError('An error occured. Please try again later');
+            }
             const { message } = error.response.data;
+            console.log(message)
             setError(message);
         }
     }
     return (
-        <VStack spacing="20px" as="form">
+        <VStack spacing="20px" as="form" color="gray.300">
             <Input name="email" size="md" type="text" placeholder="Enter your email address" onChange={updateForm} />
             <Input name="password" size="md" type="password" placeholder="Enter your password" onChange={updateForm} />
             {error && <FormError message={error} />}
-            <Button onClick={submitForm}>Log in</Button>
+            <Button onClick={submitForm} color="#000">Log in</Button>
         </VStack>
     )
 }

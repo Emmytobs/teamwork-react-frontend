@@ -103,7 +103,7 @@ function ChatBox(props) {
                     setShowComments={setShowComments} 
                 />
             }
-            {/* {showComments && <Comments setShowComments={setShowComments} />} */}
+            {showComments && <Comments setShowComments={setShowComments} />}
             <PostInput submitPost={submitPost} />
         </Box>
     )

@@ -3,8 +3,8 @@ import {
     STORE_USER_DATA,
     STORE_DEPARTMENT_MEMBERS,
     STORE_POST,
-    STORE_LATEST_POSTS,
-    STORE_PREVIOUS_POSTS
+    STORE_PREVIOUS_POSTS,
+    STORE_UPDATED_POST
 } from './actionNames';
 
 // Used in the LogIn and SignUp component(s)
@@ -16,8 +16,8 @@ export const storeToken = (token, dispatch) => {
 }
 
 // Used in the LogIn and SignUp component(s)
-export const storeUser = ({ firstname, lastname, email, department, isadmin, profilePic }, dispatch) => {
-    dispatch({ type: STORE_USER_DATA, payload: { firstname, lastname, email, department, isadmin, profilePic } });
+export const storeUser = ({ userId, firstname, lastname, email, department, isadmin, profilePic }, dispatch) => {
+    dispatch({ type: STORE_USER_DATA, payload: { userId, firstname, lastname, email, department, isadmin, profilePic } });
 }
 
 // Used in the MenuBar component
@@ -33,4 +33,9 @@ export const storePost  = (post, dispatch) => {
 // Used in the ChatBox.js component
 export const storePreviousPosts = (posts, dispatch) => {
     dispatch({ type: STORE_PREVIOUS_POSTS, payload: posts });
+}
+// Used in the Post.js component
+export const storeUpdatedPost = (post, dispatch) => {
+    console.log(post)
+    dispatch({ type: STORE_UPDATED_POST, payload: post });
 }

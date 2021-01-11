@@ -1,8 +1,56 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { connect } from 'react-redux'
+import axios from 'axios';
 
-import { Box, Text } from '@chakra-ui/react';
+import { storeUpdatedPost } from '../../../context/dispatchers'
+import { Box, Text, Input, Button, useEditableControls, useMergeRefs } from '@chakra-ui/react';
 
 function Post(props) {
+    const [editablePostId, setEditablePostId] = useState('')
+    const [hiddenPostId, setHiddenPostId] = useState('');
+    const [updatedPost, setUpdatedPost] = useState('');
+    // useEffect(() => console.log(editablePostId), [editablePostId]);
+    const showCommentsModal = (e) => { 
+        console.log(props.post.post_id);
+        props.setPostClicked(props.post.post_id) ;
+        props.setShowComments(true);
+    } 
+    
+    const editPostHandler = (postId, oldPost) => {
+        setUpdatedPost(oldPost)
+        setEditablePostId(postId);
+        setHiddenPostId(postId);
+    }
+
+    const cancelEditPostHandler = (postId) => {
+        setEditablePostId('');
+        setHiddenPostId('');
+    }
+
+    const updatePost = async (e) => {
+        e.preventDefault();
+        
+        function removeUpdateInput () {
+            setEditablePostId('');
+            setHiddenPostId('');   
+        }
+        
+        try {
+            const response = await axios.put(
+                `${process.env.REACT_APP_API_URL}/post`,
+                { article: updatedPost, postId: props.post.post_id },
+                { headers: { 'Authorization': `Bearer ${props.token}` } }
+                )
+            if (response.status === 200) {
+                const { post } = response.data.data;
+                removeUpdateInput() 
+                return storeUpdatedPost(post, props.dispatch);
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     return (
         <Box 
         className="post-container"
@@ -10,13 +58,7 @@ function Post(props) {
         py="10px" 
         px="25px"
         borderTop="1px solid rgba(0,0,0,0.3)" 
-        borderBottom="1px solid rgba(0,0,0,0.3)"
-        onClick={() => { 
-            console.log(props.post.post_id);
-            // props.setPostClicked(props.post.post_id) ;
-            // props.setShowComments(true);
-            } 
-        }>
+        borderBottom="1px solid rgba(0,0,0,0.3)">
             <Box >
                 <img src={props.post.profile_pic ? props.post.profile_pic : 'https://res.cloudinary.com/emmytobs/image/upload/v1609773803/pngfind.com-default-avatar-png-4686427_vvbc3e.png'} width="30px" height="30px" alt='user profile'/>
             </Box>            
@@ -29,17 +71,37 @@ function Post(props) {
                     {props.post.firstname} {props.post.lastname} 
                 </Text>
                 <Text as="span" ml="10px" color="gray.500">{props.date}</Text>
-                <Box className="modify-post-container">
-                    <Text as="button" className="edit-btn">Edit</Text>
-                    <Text as="button" className="delete-btn">Delete</Text>
+               <Box className="modify-post-container" >
+                    {props.user.userId === props.post.created_by &&
+                    <>
+                        <Text as="button" className="edit-btn" onClick={() => editPostHandler(props.post.post_id, props.post.article)}>Edit</Text>
+                        <Text as="button" className="delete-btn">Delete</Text>
+                    </>
+                    }
+                    <Text as="button" className="comments-btn" onClick={showCommentsModal}>View Comments</Text>
                 </Box>
             </Box>
             <Box>
-            <Text>{props.post.article}</Text>
+            {props.post.post_id !== editablePostId && <Text>{props.post.article}</Text>}
+
+            {props.post.post_id === editablePostId &&
+                <form as="form" onSubmit={updatePost}>
+                    <Input value={updatedPost} onChange={(e) => setUpdatedPost(e.target.value)} />
+                    <Button type='submit'>Update post</Button>
+                    <Button onClick={() => cancelEditPostHandler(props.post.post_id)}>Cancel</Button>
+                </form>
+            }
             {props.post.gif_link && <img src={props.post.gif_link} alt="gif" w="100%" h="auto" />}
             </Box>
         </Box>
     )
 }
 
-export default Post
+const mapStateToProps = (state) => {
+    return {
+        token: state.token,
+        user: state.user
+    }
+}
+
+export default connect(mapStateToProps, null)(Post)

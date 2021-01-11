@@ -10,7 +10,7 @@
 
 .modify-post-container {
     display: none;
-    margin-left: 15px;
+    margin-left: 35px;
     color: #fff;
 }
 
@@ -25,14 +25,16 @@
 }
 
 .edit-btn:hover,
-.delete-btn:hover {
+.delete-btn:hover,
+.comments-btn:hover {
     border: 2px solid var(--main-bg-color);
     background: #fff;
     color: #000;
 }
 
 .edit-btn,
-.delete-btn {
+.delete-btn,
+.comments-btn {
     background: var(--main-bg-color);
     padding: 5px 5px;
 }

@@ -20,13 +20,17 @@ function LogIn(props) {
         // Send API post request to log user in
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, { ...form });
-            const { token, user: { firstname, lastname, email, department, isadmin, profilePic } } = response.data.data;
-        
+            const { 
+                token, 
+                user: { 
+                    user_id: userId, firstname, lastname, email, department, isadmin, profilePic 
+                } 
+            } = response.data.data;
             if(!response) {
                 setError('Couldn\'t make request. Please check your internet connection');
             }
             storeToken(token, props.dispatch);
-            storeUser({ firstname, lastname, email, department, isadmin, profilePic }, props.dispatch);
+            storeUser({ userId, firstname, lastname, email, department, isadmin, profilePic }, props.dispatch);
 
             setError('');
             props.history.push('/app');

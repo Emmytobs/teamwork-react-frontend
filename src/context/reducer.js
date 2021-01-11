@@ -3,12 +3,13 @@ import {
     STORE_USER_DATA,
     STORE_DEPARTMENT_MEMBERS,
     STORE_POST,
-    STORE_LATEST_POSTS,
-    STORE_PREVIOUS_POSTS
+    STORE_PREVIOUS_POSTS,
+    STORE_UPDATED_POST
 } from './actionNames';
 
 const initialState = {
     user: {
+        userId: '',
         firstname: '',
         lastname: '',
         email: '',
@@ -48,19 +49,33 @@ export default function reducer (state=initialState, action) {
                 posts: [ ...state.posts, action.payload ]
             }
 
-        case STORE_LATEST_POSTS: 
-            return {
-                ...state,
-                posts: [ ...action.payload ]
-            }
-
         case STORE_PREVIOUS_POSTS:
             return {
                 ...state,
                 posts: [ ...action.payload, ...state.posts ]
             }
+            
+        case STORE_UPDATED_POST:
+            return storePostUpdate(state, action.payload)
 
         default:
             return state;
+    }
+}
+
+function storePostUpdate (state, updatedPost) {
+    const { post_id: postId } = updatedPost;
+    const updatedPosts = state.posts.map(post => {
+        if (post.post_id === postId) {
+            return {
+                ...post,
+                article: updatedPost.article
+            }
+        }
+        return post
+    });
+    return {
+        ...state,
+        posts: [ ...updatedPosts ]
     }
 }

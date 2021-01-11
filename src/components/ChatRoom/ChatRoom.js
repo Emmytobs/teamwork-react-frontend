@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 
 import MenuBar from './MenuBar/MenuBar';
 import ChatBox from './ChatBox/ChatBox';
-import CommentBox from './CommentBox/CommentBox';
 
 import './ChatRoom.css';
 
@@ -16,7 +15,6 @@ function ChatRoom(props) {
         <Box className="container">
             <MenuBar />
             <ChatBox />
-            <CommentBox />
         </Box>
     )
 }

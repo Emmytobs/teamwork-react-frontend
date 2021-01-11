@@ -44,6 +44,10 @@ function Post(props) {
             if (response.status === 200) {
                 const { post } = response.data.data;
                 removeUpdateInput() 
+                // Redux does not re-render the Post component
+                // because the posts data in the redux state is not mapped to props 
+                // However it is mapped to props in the ChatBox component
+                // Try to run the storeUpdatedPost dispatcher in the ChatBos component instead
                 return storeUpdatedPost(post, props.dispatch);
             }
         } catch (error) {

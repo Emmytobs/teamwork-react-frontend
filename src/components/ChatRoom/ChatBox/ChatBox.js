@@ -8,7 +8,7 @@ import PostInput from './PostInput';
 import Post from './Post';
 import Comments from './Comments';
 
-import { storePreviousPosts, storePost } from '../../../context/dispatchers';
+import { storePreviousPosts, storePost, storeUpdatedPost, removeDeletedPost } from '../../../context/dispatchers';
 
 import './ChatBox.css';
 
@@ -70,11 +70,53 @@ function ChatBox(props) {
 
             if (response.status === 201) {
                 const { post } = response.data.data;
+                console.log(post)
                 return storePost(post, props.dispatch);
             }
         } catch (error) {
             console.log(error.message, error.response)
         }
+    }
+
+    const updatePost = async ({ article, postId }) => {
+        try {
+            const response = await axios.put(
+                `${process.env.REACT_APP_API_URL}/post`,
+                { article, postId },
+                { headers: { 'Authorization': `Bearer ${props.token}` } }
+                )
+            if (response.status === 200) {
+                const { post } = response.data.data;
+                // Redux does not re-render the Post component
+                // because the posts data in the redux state is not mapped to props 
+                // However it is mapped to props in the ChatBox component
+                // Try to run the storeUpdatedPost dispatcher in the ChatBos component instead
+                storeUpdatedPost(post, props.dispatch);
+                return true;
+            }
+        } catch (error) {
+            console.log(error)
+            return false
+        }
+    }
+
+    const deletePost = async ({ postId }) => {
+        try {
+            const response = await axios.delete(
+                `${process.env.REACT_APP_API_URL}/post?postId=${postId}`,
+                { headers: { 'Authorization': 'Bearer ' + props.token } }
+            );
+            
+            if (response.status === 200) {
+                removeDeletedPost(postId, props.dispatch);
+                return true;
+            }
+
+        } catch (error) {
+            console.log(error)
+            return false
+        }
+        console.log(postId)
     }
 
     return (
@@ -93,7 +135,9 @@ function ChatBox(props) {
                         date={formattedDate} 
                         // handleShowComments={handleShowComments}
                         setShowComments={setShowComments}
-                        setPostClicked={setPostClicked} />
+                        setPostClicked={setPostClicked}
+                        updatePost={updatePost}
+                        deletePost={deletePost} />
                 )
             })}
             {showComments && 

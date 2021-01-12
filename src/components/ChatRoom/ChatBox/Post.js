@@ -9,7 +9,7 @@ function Post(props) {
     const [editablePostId, setEditablePostId] = useState('')
     const [hiddenPostId, setHiddenPostId] = useState('');
     const [updatedPost, setUpdatedPost] = useState('');
-    // useEffect(() => console.log(editablePostId), [editablePostId]);
+    
     const showCommentsModal = (e) => { 
         console.log(props.post.post_id);
         props.setPostClicked(props.post.post_id) ;
@@ -29,29 +29,28 @@ function Post(props) {
 
     const updatePost = async (e) => {
         e.preventDefault();
-        
-        function removeUpdateInput () {
+        const response = await props.updatePost({ article: updatedPost, postId: props.post.post_id })
+
+        if (response === true) {
             setEditablePostId('');
-            setHiddenPostId('');   
+            setHiddenPostId('');
+        } else {
+            console.log('Post update failed')
+            setEditablePostId('');
+            setHiddenPostId('');
         }
+    }
+
+    const deletePost = async () => {
+        const response = await props.deletePost({ postId: props.post.post_id })
         
-        try {
-            const response = await axios.put(
-                `${process.env.REACT_APP_API_URL}/post`,
-                { article: updatedPost, postId: props.post.post_id },
-                { headers: { 'Authorization': `Bearer ${props.token}` } }
-                )
-            if (response.status === 200) {
-                const { post } = response.data.data;
-                removeUpdateInput() 
-                // Redux does not re-render the Post component
-                // because the posts data in the redux state is not mapped to props 
-                // However it is mapped to props in the ChatBox component
-                // Try to run the storeUpdatedPost dispatcher in the ChatBos component instead
-                return storeUpdatedPost(post, props.dispatch);
-            }
-        } catch (error) {
-            console.log(error)
+        if (response === true) {
+            setEditablePostId('');
+            setHiddenPostId('');
+        } else {
+            console.log('Post delete failed')
+            setEditablePostId('');
+            setHiddenPostId('');
         }
     }
 
@@ -79,7 +78,7 @@ function Post(props) {
                     {props.user.userId === props.post.created_by &&
                     <>
                         <Text as="button" className="edit-btn" onClick={() => editPostHandler(props.post.post_id, props.post.article)}>Edit</Text>
-                        <Text as="button" className="delete-btn">Delete</Text>
+                        <Text as="button" className="delete-btn" onClick={deletePost}>Delete</Text>
                     </>
                     }
                     <Text as="button" className="comments-btn" onClick={showCommentsModal}>View Comments</Text>

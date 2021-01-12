@@ -4,7 +4,8 @@ import {
     STORE_DEPARTMENT_MEMBERS,
     STORE_POST,
     STORE_PREVIOUS_POSTS,
-    STORE_UPDATED_POST
+    STORE_UPDATED_POST,
+    REMOVE_DELETED_POST
 } from './actionNames';
 
 const initialState = {
@@ -56,7 +57,10 @@ export default function reducer (state=initialState, action) {
             }
             
         case STORE_UPDATED_POST:
-            return storePostUpdate(state, action.payload)
+            return storePostUpdate(state, action.payload);
+
+        case REMOVE_DELETED_POST:
+            return deletePost(state, action.payload);
 
         default:
             return state;
@@ -74,6 +78,14 @@ function storePostUpdate (state, updatedPost) {
         }
         return post
     });
+    return {
+        ...state,
+        posts: [ ...updatedPosts ]
+    }
+}
+
+function deletePost (state, postId) {
+    const updatedPosts = state.posts.filter(post => post.post_id !== postId);
     return {
         ...state,
         posts: [ ...updatedPosts ]

@@ -4,7 +4,8 @@ import {
     STORE_DEPARTMENT_MEMBERS,
     STORE_POST,
     STORE_PREVIOUS_POSTS,
-    STORE_UPDATED_POST
+    STORE_UPDATED_POST,
+    REMOVE_DELETED_POST
 } from './actionNames';
 
 // Used in the LogIn and SignUp component(s)
@@ -36,6 +37,9 @@ export const storePreviousPosts = (posts, dispatch) => {
 }
 // Used in the Post.js component
 export const storeUpdatedPost = (post, dispatch) => {
-    console.log(post)
     dispatch({ type: STORE_UPDATED_POST, payload: post });
+}
+
+export const removeDeletedPost = (postId, dispatch) => {
+    dispatch({ type: REMOVE_DELETED_POST, payload:postId });
 }

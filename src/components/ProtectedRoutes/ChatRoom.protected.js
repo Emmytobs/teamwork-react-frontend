@@ -8,15 +8,14 @@ import { storeToken, storeUser } from '../../context/dispatchers';
 function ChatRoomProtected({ path, exact, component: Component, dispatch, token: tokenInRedux }) {
 
     const token = useRef(null);
-    const [ isTokenPresent, setIsTokenPresent ] = useState('');
+    const [ isTokenPresent, setIsTokenPresent ] = useState(false);
 
     useEffect(() => {
-        token.current = getTokenInLocalStorage()
-        console.log('From protected chatroom', token.current);
+        token.current = getTokenInLocalStorage();
        
         if (!token.current) {
             console.log('No token')
-            // redirectUserToLogin()
+            redirectUserToLogin()
         }
         else {
             console.log('Will this run')
@@ -25,19 +24,17 @@ function ChatRoomProtected({ path, exact, component: Component, dispatch, token:
     }, [])
 
     function getTokenInLocalStorage() {
-        return localStorage.getItem('token')
+        return JSON.parse(localStorage.getItem('token'))
     };
 
     function redirectUserToLogin() {
-        setIsTokenPresent(false)    
+        window.location = '/'
     }
 
     async function checkIfTokenIsValid() {
         try {
-            console.log(token.current)
             const response = await axios.get(
                 `${process.env.REACT_APP_API_URL}/user-token/verify`,
-                // `http://localhost:5000/user-token/verify`,
                 { headers: { 'Authorization': 'Bearer ' + token.current } }
             );
 
@@ -55,11 +52,11 @@ function ChatRoomProtected({ path, exact, component: Component, dispatch, token:
             
             storeToken(token.current, dispatch);
             storeUser({ userId, firstname, lastname, email, department, isadmin, profilePic }, dispatch);
-            console.log('Return the component')
             setIsTokenPresent(true)
 
         } catch (error) {
             console.log(error.response)
+            redirectUserToLogin()
         }
     }
 
